@@ -11,6 +11,7 @@ class MyApp extends StatefulWidget {
 
 class _MyAppState extends State<MyApp> {
   bool isObscure = true;
+  String username, password;
 
   @override
   Widget build(BuildContext context) {
@@ -98,6 +99,9 @@ class _MyAppState extends State<MyApp> {
                       Padding(
                         padding: const EdgeInsets.fromLTRB(20, 20, 20, 5),
                         child: TextField(
+                          onChanged: (value) {
+                            username = value;
+                          },
                           style: TextStyle(color: Color(0xFF0562A7)),
                           decoration: InputDecoration(
                             labelText: 'Username',
@@ -115,6 +119,9 @@ class _MyAppState extends State<MyApp> {
                       Padding(
                         padding: const EdgeInsets.fromLTRB(20, 20, 20, 5),
                         child: TextField(
+                          onChanged: (value) {
+                            password = value;
+                          },
                           obscureText: isObscure,
                           style: TextStyle(color: Color(0xFF0562A7)),
                           decoration: InputDecoration(
@@ -159,18 +166,23 @@ class _MyAppState extends State<MyApp> {
                       SizedBox(
                         height: 20,
                       ),
-                      Container(
-                        width: 250,
-                        height: 50,
-                        decoration: BoxDecoration(
-                          color: Color(0xFF0562A7),
-                          borderRadius: BorderRadius.circular(30),
-                        ),
-                        child: Center(
-                          child: Text(
-                            'Log In',
-                            style: TextStyle(
-                              color: Colors.white,
+                      GestureDetector(
+                        onTap: () {
+                          print("Username ->$username\nPassword ->$password");
+                        },
+                        child: Container(
+                          width: 250,
+                          height: 50,
+                          decoration: BoxDecoration(
+                            color: Color(0xFF0562A7),
+                            borderRadius: BorderRadius.circular(30),
+                          ),
+                          child: Center(
+                            child: Text(
+                              'Log In',
+                              style: TextStyle(
+                                color: Colors.white,
+                              ),
                             ),
                           ),
                         ),
