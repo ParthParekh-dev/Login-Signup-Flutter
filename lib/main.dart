@@ -1,4 +1,8 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 
 void main() {
   runApp(MyApp());
@@ -12,6 +16,19 @@ class MyApp extends StatefulWidget {
 class _MyAppState extends State<MyApp> {
   bool isObscure = true;
   String username, password;
+  Widget loginChild = LoginButton();
+
+  void showLoader() {
+    setState(() {
+      loginChild = Spinner();
+    });
+  }
+
+  void hideLoader() {
+    setState(() {
+      loginChild = LoginButton();
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -30,8 +47,9 @@ class _MyAppState extends State<MyApp> {
                 child: Container(
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.only(
-                        bottomRight: Radius.circular(30),
-                        bottomLeft: Radius.circular(30)),
+                      bottomRight: Radius.circular(30),
+                      bottomLeft: Radius.circular(30),
+                    ),
                     color: Colors.white,
                   ),
                   child: Column(
@@ -167,8 +185,24 @@ class _MyAppState extends State<MyApp> {
                         height: 20,
                       ),
                       GestureDetector(
-                        onTap: () {
-                          print("Username ->$username\nPassword ->$password");
+                        onTap: () async {
+                          showLoader();
+                          // print("Username ->$username\nPassword ->$password");
+                          var url = Uri.parse(
+                              'https://dattarubberindustries.com/api/login.php');
+                          var response = await http.post(url, body: {
+                            'usr_email': '$username',
+                            'usr_pass': '$password'
+                          });
+                          Future.delayed(Duration(milliseconds: 3000), () {
+                            hideLoader();
+                          });
+
+                          if (jsonDecode(response.body)['success'] == 1) {
+                            print("Success");
+                          } else {
+                            print("Failure");
+                          }
                         },
                         child: Container(
                           width: 250,
@@ -177,14 +211,7 @@ class _MyAppState extends State<MyApp> {
                             color: Color(0xFF0562A7),
                             borderRadius: BorderRadius.circular(30),
                           ),
-                          child: Center(
-                            child: Text(
-                              'Log In',
-                              style: TextStyle(
-                                color: Colors.white,
-                              ),
-                            ),
-                          ),
+                          child: loginChild,
                         ),
                       ),
                       SizedBox(
@@ -236,6 +263,43 @@ class _MyAppState extends State<MyApp> {
               ),
             ],
           ),
+        ),
+      ),
+    );
+  }
+}
+
+class Spinner extends StatelessWidget {
+  const Spinner({
+    Key key,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: Center(
+        child: SpinKitCircle(
+          color: Colors.white,
+          size: 40.0,
+        ),
+      ),
+    );
+  }
+}
+
+class LoginButton extends StatelessWidget {
+  const LoginButton({
+    Key key,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: Text(
+        'Log In',
+        style: TextStyle(
+          color: Colors.white,
         ),
       ),
     );
